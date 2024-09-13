@@ -1,6 +1,6 @@
 {
     "name" : "chat-room" ,
     "db" : {
-        "address": "mongodb://localhost:27017/authporject"
+        "address": "mongodb://localhost:27017/chatroom"
     }
 }
