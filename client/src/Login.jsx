@@ -7,23 +7,30 @@ const Login = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
 
 
     axios.defaults.withCredentials = true;
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault()
-        axios.post("http://127.0.0.1:3000/login", { email, password })
-            .then(res => {
-                if(res.data.Login){
-                    navigate("/dahboard")
-                }else{
-                    navigate("/register")
-                }
-                console.log(res.data);
-            })
-            .catch(err => console.log(err))
+        setErrorMessage('');
 
+        try {
+            const response = await axios.post('http://127.0.0.1:3000/login', {
+                email,
+                password,
+            });
+
+            if (response.data.Login) {
+                navigate('/dashboard');
+            } else {
+                setErrorMessage('ایمیل یا رمز عبور اشتباه است.');
+            }
+        } catch (error) {
+            console.error(error);
+            setErrorMessage('خطایی رخ داده است. لطفا دوباره تلاش کنید.');
+        }
     }
 
 
@@ -49,6 +56,13 @@ const Login = () => {
                                                 <label htmlFor="email" className="form-label">email </label>
 
                                             </div>
+                                        </div>
+                                        <div className="col-12">
+                                            {errorMessage && (
+                                                <div className="alert alert-danger" role="alert">
+                                                    {errorMessage}
+                                                </div>
+                                            )}
                                         </div>
 
                                         <div className="col-12">

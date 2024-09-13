@@ -7,6 +7,7 @@ const Registration = () => {
     const [name, setName] = useState('');
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const  [error, setError] = useState('');
     const navigate = useNavigate()
 
  
@@ -17,7 +18,7 @@ const handleSubmit = (e) => {
     .then(res => {
         navigate('/Login')
     })
-    .catch(err => console.log(err))
+    .catch(err => {setError(err.response.data.error);})
 
 }
 
@@ -67,15 +68,13 @@ const handleSubmit = (e) => {
                                             </div>
                                         </div>
 
-
+                                        {error && <div className="error-message">{error}</div>}
                                         <div className="col-12">
                                             <div className="d-grid my-3">
                                                 <button className="btn btn-primary btn-lg" type="submit">Sign up</button>
                                             </div>
                                         </div>
-                                        <div className="col-12">
-                                            <p className="m-0 text-secondary text-center">Already have an account? <a href="#!" className="link-primary text-decoration-none">Sign in</a></p>
-                                        </div>
+                                        
                                     </div>
                                 </form>
                             </div>
