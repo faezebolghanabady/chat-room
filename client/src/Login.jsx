@@ -3,23 +3,25 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 
 
-const Registration = () => {
-    const [name, setName] = useState('');
+const Login = () => {
+
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const navigate = useNavigate()
+    const navigate = useNavigate();
 
- 
 
-const handleSubmit = (e) => {
-    e.preventDefault()
-    axios.post("http://127.0.0.1:3000/register" , {name , email , password})
-    .then(res => {
-        navigate('/Login')
-    })
-    .catch(err => console.log(err))
+    axios.defaults.withCredentials = true;
+    const handleSubmit = (e) => {
+        e.preventDefault()
+        axios.post("http://127.0.0.1:3000/login", { email, password })
+            .then(res => {
+                console.log(res.data);
+                // navigate('/Login')
+            })
+            .catch(err => console.log(err))
 
-}
+    }
+
 
 
     return (
@@ -32,18 +34,9 @@ const handleSubmit = (e) => {
                                 <div className="text-center mb-3">
 
                                 </div>
-                                <h2 className="fs-6 fw-normal text-center text-secondary mb-4">Enter your details to register</h2>
+                                <h2 className="fs-6 fw-normal text-center text-secondary mb-4">Login</h2>
                                 <form onSubmit={handleSubmit}>
                                     <div className="row gy-2 overflow-hidden">
-                                        <div className="col-12">
-                                            <div className="form-floating mb-3">
-                                                <input
-                                                    onChange={(e) => setName(e.target.value)}
-                                                    type="text" className="form-control" name="name" id="name" placeholder="name" />
-                                                <label htmlFor="name" className="form-label">First Name</label>
-
-                                            </div>
-                                        </div>
 
                                         <div className="col-12">
                                             <div className="form-floating mb-3">
@@ -54,8 +47,6 @@ const handleSubmit = (e) => {
 
                                             </div>
                                         </div>
-
-
 
                                         <div className="col-12">
                                             <div className="form-floating mb-3">
@@ -70,11 +61,16 @@ const handleSubmit = (e) => {
 
                                         <div className="col-12">
                                             <div className="d-grid my-3">
-                                                <button className="btn btn-primary btn-lg" type="submit">Sign up</button>
+                                                <button className="btn btn-primary btn-lg" type="submit">login</button>
                                             </div>
                                         </div>
                                         <div className="col-12">
-                                            <p className="m-0 text-secondary text-center">Already have an account? <a href="#!" className="link-primary text-decoration-none">Sign in</a></p>
+                                            <p className="m-0 text-secondary text-center">dont have account?</p>
+                                        </div>
+                                        <div className="col-12">
+                                            <div className="d-grid my-3">
+                                                <button className="btn btn-lg" type="submit">register</button>
+                                            </div>
                                         </div>
                                     </div>
                                 </form>
@@ -84,7 +80,7 @@ const handleSubmit = (e) => {
                 </div>
             </div>
         </section>
-    );
-};
+    )
+}
 
-export default Registration;
+export default Login
