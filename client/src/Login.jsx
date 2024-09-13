@@ -15,13 +15,16 @@ const Login = () => {
         e.preventDefault()
         axios.post("http://127.0.0.1:3000/login", { email, password })
             .then(res => {
+                if(res.data.Login){
+                    navigate("/dahboard")
+                }else{
+                    navigate("/register")
+                }
                 console.log(res.data);
-                // navigate('/Login')
             })
             .catch(err => console.log(err))
 
     }
-
 
 
     return (

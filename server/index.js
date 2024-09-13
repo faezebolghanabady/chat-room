@@ -32,10 +32,12 @@ app.post('/login' , (req , res) =>{
                     res.cookie('refreshToken' , refreshToken , 
                     {maxAge : 300000 , httpOnly:true , secure:true , sameSite:'strict'})
 
-                    res.json('login successful')
+                    res.json({Login : true})
             }
+        }else{
+            res.json({Login:false , message:"no recored"})
         }
-    })
+    }).catch(err=>res.json(err))
 })
 
 app.post('/register' , (req , res)=>{
