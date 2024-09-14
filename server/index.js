@@ -3,12 +3,15 @@ const { mongoose } = require("mongoose");
 const cors = require("cors");
 const Jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
-
+const http = require("http");
+const { Server } = require("socket.io");
 const User = require("./models/user");
+const { Socket } = require("dgram");
+
 
 const app = expresse();
 app.use(expresse.json());
-app.use(cookieParser())
+app.use(cookieParser());
 app.use(
   cors({
     origin: ["http://localhost:5173"],
@@ -18,82 +21,87 @@ app.use(
 
 mongoose.connect("mongodb://127.0.0.1:27017/chatroom");
 
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: "http://127.0.0.1:3000",
+    methods: ["GET", "POST"],
+  },
+});
+
+io.on("connection", (Socket) => {
+  console.log(Socket.io);
+  Socket.on("disconnect", () => {
+    console.log("User disconnected", Socket.io);
+  });
+});
 
 app.post("/login", (req, res) => {
-    const { email, password } = req.body;
-  
-    User.findOne({ email })
-      .then((user) => {
-        if (user) {
-          if (user.password === password) { // Use strict comparison for passwords
-            const accessToken = Jwt.sign(
-              { email: email },
-              "jwt-access-token-secret-key",
-              { expiresIn: "1m" }
-            );
-  
-            const refreshToken = Jwt.sign(
-              { email: email },
-              "jwt-refresh-token-secret-key",
-              { expiresIn: "5m" }
-            );
-  
-            res.cookie("accessToken", accessToken, { maxAge: 60000 });
-            res.cookie("refreshToken", refreshToken, {
-              maxAge: 300000,
-              httpOnly: true,
-              secure: true,
-              sameSite: "strict",
-            });
-  
-            res.json({ Login: true });
-          } else {
-            res.json({ Login: false, message: "Invalid password" });
-          }
+  const { email, password } = req.body;
+
+  User.findOne({ email })
+    .then((user) => {
+      if (user) {
+        if (user.password === password) {
+          // Use strict comparison for passwords
+          const accessToken = Jwt.sign(
+            { email: email },
+            "jwt-access-token-secret-key",
+            { expiresIn: "1m" }
+          );
+
+          const refreshToken = Jwt.sign(
+            { email: email },
+            "jwt-refresh-token-secret-key",
+            { expiresIn: "5m" }
+          );
+
+          res.cookie("accessToken", accessToken, { maxAge: 60000 });
+          res.cookie("refreshToken", refreshToken, {
+            maxAge: 300000,
+            httpOnly: true,
+            secure: true,
+            sameSite: "strict",
+          });
+
+          res.json({ Login: true });
         } else {
-          res.json({ Login: false, message: "Email not found" });
+          res.json({ Login: false, message: "Invalid password" });
         }
-      })
-      .catch((err) => res.json(err));
-  });
+      } else {
+        res.json({ Login: false, message: "Email not found" });
+      }
+    })
+    .catch((err) => res.json(err));
+});
 
-
-app.post("/register", async(req, res) => {
+app.post("/register", async (req, res) => {
   const { name, email, password } = req.body;
   try {
     const existingUser = await User.findOne({ email });
     if (existingUser) {
-        return res.status(409).json({ error: 'ایمیل قبلاً استفاده شده است' });
+      return res.status(409).json({ error: "ایمیل قبلاً استفاده شده است" });
     }
     const newUser = new User({
-        name,
-        email,
-        password
+      name,
+      email,
+      password,
     });
     await newUser.save();
 
-    res.status(201).json({ message: 'ثبت نام با موفقیت انجام شد' });
-    
-    
-  }  catch (err) {
+    res.status(201).json({ message: "ثبت نام با موفقیت انجام شد" });
+  } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'خطای رخ داده است' });
-}
-
+    res.status(500).json({ error: "خطای رخ داده است" });
+  }
 });
-
-
-
-
-
-
-
 
 const varifyUser = (req, res, next) => {
   const accessToken = req.cookies.accessToken;
   if (!accessToken) {
-    if(renewToken(req,res)){
-        next()
+    if (renewToken(req, res)) {
+      next();
     }
   } else {
     Jwt.verify(accessToken, "jwt-access-token-secret-key", (err, decoded) => {
@@ -109,7 +117,7 @@ const varifyUser = (req, res, next) => {
 
 const renewToken = (req, res) => {
   const refreshtoken = req.cookies.refreshToken;
-  let exist = false
+  let exist = false;
   if (!refreshtoken) {
     return res.json({ valid: false, message: "no refresh token" });
   } else {
@@ -121,7 +129,7 @@ const renewToken = (req, res) => {
           { email: decoded.email },
           "jwt-access-token-secret-key",
           { expiresIn: "1m" }
-        )
+        );
         res.cookie("accessToken", accessToken, { maxAge: 60000 });
         exist = true;
       }
@@ -130,7 +138,7 @@ const renewToken = (req, res) => {
   return exist;
 };
 
-app.get("/dahboard", varifyUser ,(req, res) => {
+app.get("/dahboard", varifyUser, (req, res) => {
   return res.json({ valid: true, message: "authorized" });
 });
 
