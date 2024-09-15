@@ -18,7 +18,14 @@ const handleSubmit = (e) => {
     .then(res => {
         navigate('/Login')
     })
-    .catch(err => {setError(err.response.data.error);})
+    .catch(err => {
+        if (err.response && err.response.data) {
+          setError(err.response.data.error);
+        } else {
+          setError('خطایی در ارتباط با سرور رخ داده است');
+        }
+      });
+   
 
 }
 

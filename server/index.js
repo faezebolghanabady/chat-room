@@ -1,15 +1,16 @@
-const expresse = require("express");
+var expresse = require("express");
 const { mongoose } = require("mongoose");
 const cors = require("cors");
 const Jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
-const http = require("http");
-const { Server } = require("socket.io");
+var http = require("http")
+const { createServer } = require('ws');
+const { Server } = require("socket.io")
 const User = require("./models/user");
-const { Socket } = require("dgram");
 
 
-const app = expresse();
+
+var app = expresse();
 app.use(expresse.json());
 app.use(cookieParser());
 app.use(
@@ -19,23 +20,40 @@ app.use(
   })
 );
 
-mongoose.connect("mongodb://127.0.0.1:27017/chatroom");
 
+mongoose.connect("mongodb://localhost:27017/chatroom");
+
+app.use(cors())
 const server = http.createServer(app);
-
 const io = new Server(server, {
+  path: '/chat',
+ 
   cors: {
-    origin: "http://127.0.0.1:3000",
+    origin: "http://localhost:5173",
+    credentials: true,
     methods: ["GET", "POST"],
   },
 });
 
-io.on("connection", (Socket) => {
-  console.log(Socket.io);
-  Socket.on("disconnect", () => {
-    console.log("User disconnected", Socket.io);
-  });
+
+
+io.on('connection', (socket) => {
+  console.log(`user conected`);
+  socket.on("chat" , chat =>{
+    io.emit("chat" , chat)
+  })
+
+  socket.on("disconnected" , ()=>{
+    console.log('disconnected');
+  })
+
 });
+
+
+app.use(cors({
+  origin: 'http://localhost:5173',
+  credentials: true 
+}));
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body;
@@ -142,5 +160,14 @@ app.get("/dahboard", varifyUser, (req, res) => {
   return res.json({ valid: true, message: "authorized" });
 });
 
+
+
+
 const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`listen on port ${port}`));
+app.set( "ipaddr", "127.0.0.1" );
+app.set( "port", 3000 );
+
+
+app.listen(app.get('port'), app.get('ipaddr'), () => {
+  console.log(`Server is running at http://${app.get('ipaddr')}:${app.get('port')}`);
+});

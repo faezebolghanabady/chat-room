@@ -8,33 +8,63 @@ const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
+
+
     const navigate = useNavigate();
 
 
     axios.defaults.withCredentials = true;
+
     const handleSubmit = async (e) => {
-        e.preventDefault()
+        e.preventDefault();
         setErrorMessage('');
 
         try {
+
             const response = await axios.post('http://127.0.0.1:3000/login', {
                 email,
-                password,
+                password
+            }, {
+                withCredentials: true 
             });
-
-            if (response.data.Login) {
-                navigate('/dashboard');
+            if (response.status === 200) {
+                navigate('/chat');
+                // localStorage.setItem('email', email);
             } else {
-                setErrorMessage('ایمیل یا رمز عبور اشتباه است.');
+                setErrorMessage(response.data.message || 'خطایی در ورود رخ داده است.');
             }
         } catch (error) {
             console.error(error);
-            setErrorMessage('خطایی رخ داده است. لطفا دوباره تلاش کنید.');
+            setErrorMessage('مشکلی در اتصال به سرور رخ داده است. لطفا دوباره تلاش کنید.');
         }
-    }
+    };
+
+
+    // const handleSubmit = async (e) => {
+    //     e.preventDefault()
+    //     setErrorMessage('');
+    //     try {
+    //         const response = await axios.post('http://127.0.0.1:3000/login', {
+    //             email,
+    //             password,
+    //         });
+
+    //         if (response.data.Login) {
+    //             navigate('/chat');
+    //             localStorage.setItem('email' , email)
+    //         } else {
+    //             setErrorMessage('ایمیل یا رمز عبور اشتباه است.');
+    //         }
+    //     } catch (error) {
+    //         console.error(error);
+    //         setErrorMessage('خطایی رخ داده است. لطفا دوباره تلاش کنید.');
+    //     }
+    // }
+
 
 
     return (
+
         <section className="bg-light py-3 py-md-5">
             <div className="container">
                 <div className="row justify-content-center">
