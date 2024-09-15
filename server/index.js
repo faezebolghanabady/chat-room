@@ -1,9 +1,9 @@
-var expresse = require("express");
+const expresse = require("express");
 const { mongoose } = require("mongoose");
 const cors = require("cors");
 const Jwt = require("jsonwebtoken");
 const cookieParser = require("cookie-parser");
-var http = require("http")
+const http = require("http")
 const { createServer } = require('ws');
 const { Server } = require("socket.io")
 const User = require("./models/user");
@@ -26,8 +26,7 @@ mongoose.connect("mongodb://localhost:27017/chatroom");
 app.use(cors())
 const server = http.createServer(app);
 const io = new Server(server, {
-  path: '/chat',
- 
+
   cors: {
     origin: "http://localhost:5173",
     credentials: true,
@@ -36,17 +35,28 @@ const io = new Server(server, {
 });
 
 
-
 io.on('connection', (socket) => {
+  
   console.log(`user conected`);
-  socket.on("chat" , chat =>{
-    io.emit("chat" , chat)
+  // socket.on("chat" , chat =>{
+  //   io.emit("chat" , chat)
+  // })
+  socket.on("join_room" , (data)=>{
+    socket.join(data);
+    console.log(`user whit id : ${socket.id} joined room ${data}`);
   })
 
-  socket.on("disconnected" , ()=>{
-    console.log('disconnected');
+  socket.on("send_message" , (data) =>{
+    console.log(data);
   })
 
+  socket.on('chat message', (msg) => {
+    io.emit('chat message', msg);
+  });
+
+  socket.on('disconnect', () => {
+    console.log('user disconnected');
+  });
 });
 
 
@@ -168,6 +178,6 @@ app.set( "ipaddr", "127.0.0.1" );
 app.set( "port", 3000 );
 
 
-app.listen(app.get('port'), app.get('ipaddr'), () => {
+server.listen(app.get('port'), app.get('ipaddr'), () => {
   console.log(`Server is running at http://${app.get('ipaddr')}:${app.get('port')}`);
 });

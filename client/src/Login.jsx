@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { Socket } from 'socket.io-client';
+import io from 'socket.io-client';
+import Chat from './componnents/Chat';
 
 
 const Login = () => {
-
+    const socket = io.connect("http://localhost:3000");
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
@@ -39,27 +42,11 @@ const Login = () => {
         }
     };
 
-
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault()
-    //     setErrorMessage('');
-    //     try {
-    //         const response = await axios.post('http://127.0.0.1:3000/login', {
-    //             email,
-    //             password,
-    //         });
-
-    //         if (response.data.Login) {
-    //             navigate('/chat');
-    //             localStorage.setItem('email' , email)
-    //         } else {
-    //             setErrorMessage('ایمیل یا رمز عبور اشتباه است.');
-    //         }
-    //     } catch (error) {
-    //         console.error(error);
-    //         setErrorMessage('خطایی رخ داده است. لطفا دوباره تلاش کنید.');
-    //     }
-    // }
+    const joinRoom = () => {
+        if (email !== '') {
+            socket.emit("join_room")
+        }
+    }
 
 
 
@@ -108,7 +95,7 @@ const Login = () => {
 
                                         <div className="col-12">
                                             <div className="d-grid my-3">
-                                                <button className="btn btn-primary btn-lg" type="submit">login</button>
+                                                <button onClick={joinRoom} className="btn btn-primary btn-lg" type="submit">login</button>
                                             </div>
                                         </div>
                                         <div className="col-12">
@@ -116,7 +103,7 @@ const Login = () => {
                                         </div>
                                         <div className="col-12">
                                             <div className="d-grid my-3">
-                                                <button className="btn btn-lg" type="submit">register</button>
+                                                <button  className="btn btn-lg" type="submit">register</button>
                                             </div>
                                         </div>
                                     </div>
@@ -126,6 +113,7 @@ const Login = () => {
                     </div>
                 </div>
             </div>
+            <Chat socket={socket} email={email}/>
         </section>
     )
 }
