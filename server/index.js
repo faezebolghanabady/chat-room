@@ -38,21 +38,16 @@ const io = new Server(server, {
 io.on('connection', (socket) => {
   
   console.log(`user conected`);
-  // socket.on("chat" , chat =>{
-  //   io.emit("chat" , chat)
-  // })
+ 
   socket.on("join_room" , (data)=>{
     socket.join(data);
     console.log(`user whit id : ${socket.id} joined room ${data}`);
   })
 
-  socket.on("send_message" , (data) =>{
-    socket.to(data.room).emit("recive_message" , data)
-    console.log(data);
-  })
+ 
 
-  socket.on('chat message', (msg) => {
-    io.emit('chat message', msg);
+  socket.on("send_message", (data) => {
+    socket.to(data).emit("receive_message", data);
   });
 
   socket.on('disconnect', () => {

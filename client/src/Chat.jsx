@@ -27,7 +27,8 @@ import "./assets/Style.css"
 
       try {
         await socket.emit('send_message', messageData);
-        setMessagelist((list) => [...list , messageData])
+        setMessagelist((list) => [...list , messageData]);
+        setCurrentMessage("");
         
       } catch (error) {
         console.error('Error sending message:', error);
@@ -36,7 +37,7 @@ import "./assets/Style.css"
   };
 
   useEffect(()=>{
-    socket.on("recive_message" , (data)=>{
+    socket.on("receive_message" , (data)=>{
         setMessagelist((list) => [...list , data])
     })
   } , [socket])
