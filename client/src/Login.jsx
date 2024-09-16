@@ -1,9 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
-import { Socket } from 'socket.io-client';
 import io from 'socket.io-client';
-import Chat from './Chat';
 import { useContext } from 'react';
 import EmailContext  from './UserContext';
 
@@ -42,6 +40,13 @@ const { email, setEmail , setRoom ,room } = useContext(EmailContext);
             setErrorMessage('مشکلی در اتصال به سرور رخ داده است. لطفا دوباره تلاش کنید.');
         }
     };
+
+    const joinRoom = () => {
+        if (username !== "" && room !== "") {
+          socket.emit("join_room", room);
+          setShowChat(true);
+        }
+      };
 
 
     return (
@@ -99,7 +104,7 @@ const { email, setEmail , setRoom ,room } = useContext(EmailContext);
 
                                         <div className="col-12">
                                             <div className="d-grid my-3">
-                                                <button  className="btn btn-primary btn-lg" type="submit">login</button>
+                                                <button onClick={joinRoom} className="btn btn-primary btn-lg" type="submit">login</button>
                                             </div>
                                         </div>
                                         <div className="col-12">

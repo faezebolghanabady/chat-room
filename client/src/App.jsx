@@ -4,8 +4,6 @@ import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import './App.css';
 import Registration from './Registration';
 import Login from './Login';
-import Dashboard from './Dashboard';
-import Home from './Home';
 import Chat from './Chat';
 import { EmailProvider } from './UserContext';
 
@@ -15,11 +13,10 @@ function App() {
     <EmailProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<Home />} />
+          <Route path="/" element={<Registration />} />
           <Route path="/register" element={<Registration />} />
           <Route path="/login" element={<Login />} />
           <Route path="/chat" element={<Chat />} />
-          <Route path="/dashboard" element={<Dashboard />} />
         </Routes>
       </BrowserRouter>
     </EmailProvider>
