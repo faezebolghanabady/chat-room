@@ -51,8 +51,9 @@
   }
   
   .chat-window {
-    width: 300px;
-    height: 420px;
+    width: 600px;
+    height: 600px;
+   
   }
   
   .chat-window p {
@@ -61,7 +62,7 @@
   .chat-window .chat-header {
     height: 45px;
     border-radius: 6px;
-    background: #263238;
+    background: #2b0676;
     position: relative;
     cursor: pointer;
   }
@@ -101,7 +102,7 @@
     height: auto;
     min-height: 40px;
     max-width: 120px;
-    background-color: #43a047;
+    background-color: rgb(15, 156, 227);
     border-radius: 5px;
     color: white;
     display: flex;

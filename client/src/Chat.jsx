@@ -46,7 +46,7 @@ import "./assets/Style.css"
   return (
     <div className='chat-window'>
         <div className='chat-header'>
-            <p>live chate</p>
+            <p>chat room </p>
         </div>
         <div className='chat-body'>
           {
