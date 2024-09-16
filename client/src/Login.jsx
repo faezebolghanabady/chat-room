@@ -3,12 +3,14 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import { Socket } from 'socket.io-client';
 import io from 'socket.io-client';
-import Chat from './componnents/Chat';
+import Chat from './Chat';
+import { useContext } from 'react';
+import EmailContext  from './UserContext';
 
 
 const Login = () => {
-    const socket = io.connect("http://localhost:3000");
-    const [email, setEmail] = useState('');
+const socket = io.connect("http://localhost:3000");
+const { email, setEmail , setRoom ,room } = useContext(EmailContext);
     const [password, setPassword] = useState('');
     const [errorMessage, setErrorMessage] = useState('');
 
@@ -32,7 +34,6 @@ const Login = () => {
             });
             if (response.status === 200) {
                 navigate('/chat');
-                // localStorage.setItem('email', email);
             } else {
                 setErrorMessage(response.data.message || 'خطایی در ورود رخ داده است.');
             }
@@ -42,16 +43,9 @@ const Login = () => {
         }
     };
 
-    const joinRoom = () => {
-        if (email !== '') {
-            socket.emit("join_room")
-        }
-    }
-
-
 
     return (
-
+        <div>
         <section className="bg-light py-3 py-md-5">
             <div className="container">
                 <div className="row justify-content-center">
@@ -92,10 +86,20 @@ const Login = () => {
                                             </div>
                                         </div>
 
+                                        <div className="col-12">
+                                            <div className="form-floating mb-3">
+                                                <input
+                                                    onChange={(e) => setRoom(e.target.value)}
+                                                    type="text" className="form-control" name="room" id="room" placeholder="room" />
+                                                <label htmlFor="room" className="form-label">room</label>
+
+                                            </div>
+                                        </div>
+
 
                                         <div className="col-12">
                                             <div className="d-grid my-3">
-                                                <button onClick={joinRoom} className="btn btn-primary btn-lg" type="submit">login</button>
+                                                <button  className="btn btn-primary btn-lg" type="submit">login</button>
                                             </div>
                                         </div>
                                         <div className="col-12">
@@ -113,8 +117,12 @@ const Login = () => {
                     </div>
                 </div>
             </div>
-            <Chat socket={socket} email={email}/>
+           
         </section>
+        
+        
+        </div>
+
     )
 }
 
