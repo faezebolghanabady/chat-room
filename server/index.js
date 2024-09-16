@@ -45,6 +45,7 @@ io.on("connection", (socket) => {
 
   socket.on("send_message", (data) => {
     socket.to(data.room).emit("receive_message", data);
+    console.log(data);
   });
 
   socket.on("disconnect", () => {
@@ -52,25 +53,6 @@ io.on("connection", (socket) => {
   });
 });
 
-// io.on('connection', (socket) => {
-  
-//   console.log(`user conected`);
- 
-//   socket.on("join_room" , (data)=>{
-//     socket.join(data);
-//     console.log(`user whit id : ${socket.id} joined room ${data}`);
-//   })
-
- 
-
-//   socket.on("send_message", (data) => {
-//     socket.to(data.room).emit("receive_message", data);
-//   });
-
-//   socket.on('disconnect', () => {
-//     console.log('user disconnected');
-//   });
-// });
 
 
 app.use(cors({

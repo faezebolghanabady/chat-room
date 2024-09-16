@@ -15,58 +15,32 @@ import "./assets/Style.css"
     const[currentMessage , setCurrentMessage] = useState("");
     const[messageList , setMessagelist] = useState([]);
 
-    const sendMessage = async () => {
-      if (currentMessage !== "") {
-        const messageData = {
-          room: room,
-          author: email,
-          message: currentMessage,
-          time:
-            new Date(Date.now()).getHours() +
-            ":" +
-            new Date(Date.now()).getMinutes(),
-        };
-  
-        await socket.emit("send_message", messageData);
-        setMessagelist((list) => [...list, messageData]);
+      const sendMessage = async () => {
+    if (currentMessage !== '') {
+      const messageData = {
+        room:room,
+        author: email,
+        message: currentMessage,
+        time: new Date().toLocaleTimeString('en-US', { hour12: false }),
+      };
+
+      try {
+        await socket.emit('send_message', messageData);
+        setMessagelist((list) => [...list , messageData]);
         setCurrentMessage("");
-      }
-    };
-  
-    useEffect(() => {
-      socket.on("receive_message", (data) => {
-        setMessagelist((list) => [...list, data]);
-      });
-    }, [socket]);
-  
-   
-
-  //     const sendMessage = async () => {
-  //   if (currentMessage !== '') {
-  //     const messageData = {
-  //       room:room,
-  //       author: email,
-  //       message: currentMessage,
-  //       time: new Date().toLocaleTimeString('en-US', { hour12: false }),
-  //     };
-
-  //     try {
-  //       await socket.emit('send_message', messageData);
-  //       setMessagelist((list) => [...list , messageData]);
-  //       setCurrentMessage("");
         
-  //     } catch (error) {
-  //       console.error('Error sending message:', error);
-  //     }
-  //   }
-  // };
+      } catch (error) {
+        console.error('Error sending message:', error);
+      }
+    }
+  };
 
-  // useEffect(()=>{
-  //   socket.on("receive_message" , (data)=>{
-  //     console.log('received message:', data);
-  //       setMessagelist((list) => [...list , data])
-  //   })
-  // } , [socket])
+  useEffect(()=>{
+    socket.on("receive_message" , (data)=>{
+      console.log('received message:', data);
+        setMessagelist((list) => [...list , data])
+    })
+  } , [socket])
   
 
    
