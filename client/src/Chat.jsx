@@ -6,13 +6,14 @@ import { useParams } from 'react-router-dom';
 import io from 'socket.io-client';
 import { useContext } from 'react';
 import EmailContext from './UserContext';
-
+import "./assets/Style.css"
 
  function Chat () {
     const { email , room } = useContext(EmailContext);
     const socket = io.connect("http://localhost:3000");
 
-    const[currentMessage , setCurrentMessage] = useState("")
+    const[currentMessage , setCurrentMessage] = useState("");
+    const[messageList , setMessagelist] = useState([]);
    
 
       const sendMessage = async () => {
@@ -26,7 +27,8 @@ import EmailContext from './UserContext';
 
       try {
         await socket.emit('send_message', messageData);
-        setCurrentMessage(''); 
+        setMessagelist((list) => [...list , messageData])
+        
       } catch (error) {
         console.error('Error sending message:', error);
       }
@@ -35,7 +37,7 @@ import EmailContext from './UserContext';
 
   useEffect(()=>{
     socket.on("recive_message" , (data)=>{
-        console.log(data);
+        setMessagelist((list) => [...list , data])
     })
   } , [socket])
   
@@ -43,11 +45,29 @@ import EmailContext from './UserContext';
    
   return (
     <div className='chat-window'>
-        <div>
+        <div className='chat-header'>
             <p>live chate</p>
         </div>
-        <div></div>
-        <div>
+        <div className='chat-body'>
+          {
+            messageList.map((messageContent)=>{
+              return (
+                <div className='message' id={email === messageContent.author ? "you" : "other"}>
+                  <div className='message-content'>
+                    <p>
+                      {messageContent.message}
+                    </p>
+                  </div>
+                  <div className='message-meta'>
+                    <p id="time">{messageContent.time}</p>
+                    <p id="author">{messageContent.author}</p>
+                  </div>
+                </div>
+              )
+            })
+          }
+        </div>
+        <div className='chat-footer'>
             <input
             onChange={(event)=>{
                 setCurrentMessage(event.target.value)
